@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoonTV - 影视聚合播放应用</title>
+    <meta name="description" content="基于 Flutter 开发的影视聚合播放应用">
+    <meta name="keywords" content="电影,电视剧,在线播放,影视聚合">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    
+    <!-- CORS 代理配置 -->
+    <meta name="cors-proxy" content="https://cors-anywhere.herokuapp.com/">
+    
+    <style>
+        /* 加载动画 */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .loading-subtext {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading" class="loading-container">
+        <div class="spinner"></div>
+        <div class="loading-text">MoonTV 加载中...</div>
+        <div class="loading-subtext">影视聚合播放应用</div>
+    </div>
+    
+    <script>
+        // 隐藏加载动画，显示 Flutter 应用
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('loading').style.display = 'none';
+            }, 2000);
+        });
+        
+        // CORS 代理设置
+        window.CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
+        
+        // 视频播放器配置
+        window.VIDEO_CONFIG = {
+            autoplay: false,
+            controls: true,
+            preload: 'metadata'
+        };
+    </script>
+    
+    <script src="main.dart.js" type="application/javascript"></script>
+</body>
+</html>

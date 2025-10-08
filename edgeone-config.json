@@ -1,0 +1,44 @@
+{
+  "site": {
+    "name": "moon-tv",
+    "description": "MoonTV 影视聚合播放应用"
+  },
+  "cache": {
+    "html": 3600,
+    "css": 86400,
+    "js": 86400,
+    "images": 2592000,
+    "fonts": 2592000
+  },
+  "cors": {
+    "enabled": true,
+    "origins": ["*"],
+    "methods": ["GET", "POST", "OPTIONS"],
+    "headers": ["Content-Type", "Authorization"]
+  },
+  "security": {
+    "waf": true,
+    "rate_limit": {
+      "enabled": true,
+      "requests_per_minute": 100
+    }
+  },
+  "routes": [
+    {
+      "pattern": "/assets/*",
+      "cache_control": "public, max-age=31536000"
+    },
+    {
+      "pattern": "/*.js",
+      "cache_control": "public, max-age=31536000"
+    },
+    {
+      "pattern": "/*.css", 
+      "cache_control": "public, max-age=31536000"
+    },
+    {
+      "pattern": "/",
+      "cache_control": "public, max-age=3600"
+    }
+  ]
+}
