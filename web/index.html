@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <base href="/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MoonTV - 影视聚合播放应用</title>
@@ -8,8 +9,16 @@
     <meta name="keywords" content="电影,电视剧,在线播放,影视聚合">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     
-    <!-- CORS 代理配置 -->
-    <meta name="cors-proxy" content="https://cors-anywhere.herokuapp.com/">
+    <!-- SPA 路由支持 -->
+    <script>
+        // SPA 路由历史模式支持
+        history.pushState({}, '', '/');
+        
+        // 处理 EdgeOne 路由
+        if (window.location.pathname !== '/') {
+            window.history.replaceState({}, '', '/');
+        }
+    </script>
     
     <style>
         /* 加载动画 */
@@ -47,34 +56,74 @@
             font-size: 14px;
             opacity: 0.8;
         }
+        
+        /* 错误页面样式 */
+        .error-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: #f5f5f5;
+            color: #333;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
+    <!-- 加载界面 -->
     <div id="loading" class="loading-container">
         <div class="spinner"></div>
         <div class="loading-text">MoonTV 加载中...</div>
         <div class="loading-subtext">影视聚合播放应用</div>
     </div>
     
+    <!-- 错误界面 -->
+    <div id="error" class="error-container">
+        <h1>页面加载失败</h1>
+        <p>抱歉，MoonTV 加载时出现了问题。</p>
+        <button onclick="location.reload()">重新加载</button>
+    </div>
+    
     <script>
-        // 隐藏加载动画，显示 Flutter 应用
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                document.getElementById('loading').style.display = 'none';
-            }, 2000);
+        // 错误处理
+        window.addEventListener('error', function(e) {
+            console.error('应用错误:', e.error);
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'flex';
         });
         
-        // CORS 代理设置
-        window.CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
+        // Flutter 加载完成
+        window.addEventListener('flutter-first-frame', function() {
+            setTimeout(function() {
+                document.getElementById('loading').style.display = 'none';
+            }, 1000);
+        });
         
-        // 视频播放器配置
-        window.VIDEO_CONFIG = {
-            autoplay: false,
-            controls: true,
-            preload: 'metadata'
-        };
+        // 加载超时处理
+        setTimeout(function() {
+            if (document.getElementById('loading').style.display !== 'none') {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'flex';
+            }
+        }, 10000);
+        
+        // CORS 代理设置
+        window.CORS_PROXY = 'https://corsproxy.io/?';
+        
+        // SPA 路由支持
+        if (window.history && window.history.pushState) {
+            window.addEventListener('popstate', function() {
+                // 处理浏览器前进后退
+                window.location.reload();
+            });
+        }
     </script>
     
+    <!-- Flutter Web 入口 -->
+    <script src="flutter.js" defer></script>
     <script src="main.dart.js" type="application/javascript"></script>
 </body>
 </html>
