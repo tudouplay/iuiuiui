@@ -1,61 +1,25 @@
-name: Deploy MoonTV to Multiple Platforms
+name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      
+    - uses: actions/checkout@v3
+    
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.13.0'
-        channel: 'stable'
-        
-    - name: Install dependencies
-      run: flutter pub get
       
     - name: Build Web
       run: |
-        flutter build web \
-          --release \
-          --web-renderer html \
-          --base-href / \
-          --dart-define=FLUTTER_WEB_CANVASKIT_URL=/
-          
-    - name: Setup Pages
-      uses: actions/configure-pages@v2
-      
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v1
-      with:
-        path: build/web
+        flutter pub get
+        flutter build web --release --web-renderer html
         
     - name: Deploy to GitHub Pages
-      if: github.ref == 'refs/heads/main'
-      id: deployment
-      uses: actions/deploy-pages@v1
-        
-    - name: Deploy to Netlify
-      if: github.ref == 'refs/heads/main'
-      uses: netlify/actions/cli@master
-      env:
-        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+      uses: peaceiris/actions-gh-pages@v3
       with:
-        args: deploy --prod --dir=build/web
-      
-    - name: Upload build artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: moon-tv-web-build
-        path: build/web/
-        retention-days: 30
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./build/web
